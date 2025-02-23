@@ -3,7 +3,7 @@ const fs = require('node:fs/promises');
 const resources = require('./resources');
 
 const cssFile = resources.resourcePath('style.css');
-const templateFile = resources.resourcePath('page.hbs');
+const templateFile = resources.resourcePath('page.html');
 
 async function readCssFile(options) {
   const contents = await fs.readFile(cssFile, { encoding: 'utf-8' });
