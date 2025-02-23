@@ -1,12 +1,14 @@
 const path = require('path');
-const Q = require('q');
-const glob = require('glob');
+const { glob } = require('glob');
 const url = require('url');
 
-const defaultFiletypes = [
-  'jpg', 'jpeg', 'png', 'gif', 'webp',
-];
+const defaultFiletypes = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
 
+/**
+ * @param {string[]} filetypes
+ * @param {string} dir
+ * @param {boolean} isRecursive
+ */
 function filetypesToPattern(filetypes, dir, isRecursive) {
   const star = isRecursive ? '**' : '';
   const combined = filetypes.join('|');
@@ -14,6 +16,9 @@ function filetypesToPattern(filetypes, dir, isRecursive) {
   return path.join(dir || '', star, pattern);
 }
 
+/**
+ * @returns {string[]}
+ */
 function getFiletypes(options) {
   if (!options.types) {
     return defaultFiletypes;
@@ -24,45 +29,67 @@ function getFiletypes(options) {
   return options.types;
 }
 
+/**
+ * @returns {string[]}
+ */
 function optionsToPatterns(options) {
   const optionPatterns = options.pattern || [];
   const filetypes = getFiletypes(options);
-  const dirPatterns = (options.dir || []).map(
-    (dir) => filetypesToPattern(filetypes, dir, options.recursive),
+  const dirPatterns = (options.dir || []).map((dir) =>
+    filetypesToPattern(filetypes, dir, options.recursive),
   );
   return optionPatterns.concat(dirPatterns);
 }
 
+/**
+ * @returns {boolean}
+ */
 function canGlob(options) {
-  return (options.pattern && options.pattern.length > 0)
-    || (options.dir && options.dir.length > 0);
+  return (
+    (options.pattern && options.pattern.length > 0) ||
+    (options.dir && options.dir.length > 0)
+  );
 }
 
-function globFiles(options) {
+/**
+ * @returns {Promise<string[]>}
+ */
+async function globFiles(options) {
   if (!canGlob(options)) {
-    return Q([]);
+    return Promise.resolve([]);
   }
 
   const patterns = optionsToPatterns(options);
-  const files = patterns.map(
-    (pattern) => Q.nfcall(glob, pattern, { nocase: true }),
+  const filesPerPattern = patterns.map((pattern) =>
+    glob(pattern, { nocase: true }),
   );
-  return Q.all(files).then((a) => a.flat());
+  const files = await Promise.all(filesPerPattern);
+  return files.flat();
 }
 
+/**
+ * @param {string} file
+ * @returns {string}
+ */
 function httpPath(file) {
-  const f = path.sep === '\\'
-    ? file.replace(/\\/g, '/')
-    : file;
+  const f = path.sep === '\\' ? file.replace(/\\/g, '/') : file;
   return url.format(f);
 }
 
+/**
+ * @param {string[]} files
+ * @returns {string[]}
+ */
 function httpPaths(options, files) {
   const prefix = options.prefix || '';
 
   return files.map((file) => prefix + httpPath(file));
 }
 
+/**
+ * @param {string[]} l
+ * @returns {string[]}
+ */
 function deduplicate(l) {
   return l.filter((v, i, a) => a.indexOf(v) === i);
 }
@@ -79,13 +106,16 @@ function deduplicate(l) {
  * - types: the types of files to scan for (e.g. jpg, png)
  * - prefix: prefix to include in all the scanned results
  * - recursive: whether to scan files recursively or not
+ *
+ * @returns {Promise<string[]>} found files
  */
-function findFiles(options) {
+async function findFiles(options) {
   const extraFiles = options.files || [];
-  return globFiles(options)
-    .then((files) => files.concat(extraFiles))
-    .then((files) => httpPaths(options, files))
-    .then(deduplicate);
+
+  const files = await globFiles(options);
+  const allFiles = files.concat(extraFiles);
+  const fileHttpPaths = httpPaths(options, allFiles);
+  return deduplicate(fileHttpPaths);
 }
 
 module.exports = findFiles;

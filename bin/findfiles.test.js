@@ -1,4 +1,3 @@
-/* global test, expect */
 const findFiles = require('./findfiles');
 
 test('no files to be found from non-image directory', () => {
@@ -21,7 +20,7 @@ test('raw patterns', () => {
   const options = {
     pattern: ['bin/findfiles.*', 'README.*'],
   };
-  const expected = ['bin/findfiles.js', 'bin/findfiles.test.js', 'README.md'];
+  const expected = ['bin/findfiles.test.js', 'bin/findfiles.js', 'README.md'];
   return expect(findFiles(options)).resolves.toStrictEqual(expected);
 });
 
@@ -30,7 +29,7 @@ test('directory search with custom file types', () => {
     dir: ['resources'],
     types: 'css,php',
   };
-  const expected = ['resources/imagelist.php', 'resources/style.css'];
+  const expected = ['resources/style.css', 'resources/imagelist.php'];
   return expect(findFiles(options)).resolves.toStrictEqual(expected);
 });
 
@@ -44,8 +43,8 @@ test('prefix added to all files', () => {
   };
   const expected = [
     'pfix/README.md',
-    'pfix/resources/imagelist.php',
     'pfix/resources/style.css',
+    'pfix/resources/imagelist.php',
     'pfix/foobar.jpg',
   ];
   return expect(findFiles(options)).resolves.toStrictEqual(expected);

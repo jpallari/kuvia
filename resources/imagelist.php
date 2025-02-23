@@ -47,7 +47,7 @@ function print_directory_images($dir) {
   echo format_filename($dir, $last) . "\n";
 }
 
-echo "window.imagelist = [\n";
+echo "window.kuviaimagelist = [\n";
 
 $dir = image_path();
 if (!is_dir($dir)) die("];");

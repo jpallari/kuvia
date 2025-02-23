@@ -1,23 +1,32 @@
-/* global test, expect */
-const optionParser = require('./options').options;
+const { parseOptions } = require('./options');
 
 test('parse image scanning options', () => {
   const args = [
-    '-o', 'output.html',
-    '-d', 'dir1',
-    '-d', 'dir2',
+    '-o',
+    'output.html',
+    '--dir=dir1',
+    '-d',
+    'dir2',
     '-r',
-    '-t', 'jpeg',
-    '-J', 'extra.js',
-    '-C', 'extra.css',
+    '-t',
+    'jpeg',
+    '-J',
+    'extra.js',
+    '-C',
+    'extra.css',
+    'file1.jpg',
+    'file2.jpg',
   ];
-  const options = {
-    output: 'output.html',
-    dir: ['dir1', 'dir2'],
-    recursive: true,
-    types: 'jpeg',
-    js: ['extra.js'],
-    css: ['extra.css'],
+  const output = {
+    options: {
+      output: 'output.html',
+      dir: ['dir1', 'dir2'],
+      recursive: true,
+      types: 'jpeg',
+      js: ['extra.js'],
+      css: ['extra.css'],
+    },
+    argv: ['file1.jpg', 'file2.jpg'],
   };
-  expect(optionParser(args)).toMatchObject(options);
+  expect(parseOptions(args)).toMatchObject(output);
 });

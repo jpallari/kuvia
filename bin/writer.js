@@ -1,10 +1,14 @@
-const qfs = require('./qfs');
+const process = require('node:process');
+const fs = require('node:fs/promises');
 
-function writeContents(options, contents) {
+/**
+ * @params {string} contents
+ */
+async function writeContents(options, contents) {
   if (options.output) {
-    return qfs.writeFile(options.output, contents);
+    return fs.writeFile(options.output, contents, { encoding: 'utf-8' });
   }
-  return qfs.writeToStream(process.stdout, contents);
+  return process.stdout.write(contents, 'utf-8');
 }
 
 module.exports = writeContents;

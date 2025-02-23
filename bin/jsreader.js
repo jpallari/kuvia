@@ -1,24 +1,38 @@
-const Q = require('q');
-const browserify = require('browserify');
-const uglifyify = require('uglifyify');
+const fs = require('node:fs/promises');
+const { minify } = require('terser');
 const resources = require('./resources');
 
-const mainProgramPath = resources.sourcePath('main.js');
+const mainProgramPath = resources.sourcePath('kuvia.js');
+
+/**
+ * Quarantines source code such that top-level bindings are not implicitly
+ * made on the window object.
+ *
+ * @param {string} sourceCode
+ * @returns {string} quarantined source code
+ */
+function quarantineSourceCode(sourceCode) {
+  return `(() => { ${sourceCode} })();`;
+}
 
 /**
  * Read the JavaScript and bundle it up to a single file.
  *
  * By default, the JavaScript is minified. If the 'no-min' option is found
  * from the given options, the JavaScript is not minified.
+ *
+ * @returns {Promise<string>}
  */
-function readJs(options) {
-  const bundler = browserify(mainProgramPath);
-  if (!options['no-min']) {
-    bundler.transform({ global: true }, uglifyify);
+async function readJs(options) {
+  const rawSourceCode = await fs.readFile(mainProgramPath, {
+    encoding: 'utf-8',
+  });
+  const sourceCode = quarantineSourceCode(rawSourceCode);
+  if (options['no-min']) {
+    return sourceCode;
   }
-  return Q
-    .ninvoke(bundler, 'bundle')
-    .then((v) => v.toString('utf-8'));
+  const minifiedCode = await minify(sourceCode, { sourceMap: false });
+  return minifiedCode.code || '';
 }
 
 module.exports = readJs;

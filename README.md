@@ -3,35 +3,34 @@
 Kuvia is a simple image gallery for static web sites.
 Give it a list of image files, and you've got an image gallery that can be hosted in any web host.
 
-Checkout [this demo page](https://lepovirta.gitlab.io/kuvia/example/) for an example of what Kuvia generates.
+Checkout [this demo page](https://jpallari.github.io/kuvia/example/) for an example of what Kuvia generates.
 
 ## Usage
 
 ```
-Usage: kuvia [OPTIONS] [FILE ...]
-Kuvia page generator
+usage: kuvia [OPTIONS] [FILE ...]
 
-    -h, --help          Display this help.
-    -o, --output=ARG    File to write the page to. Uses STDOUT if not specified.
-    -d, --dir=ARG+      Directories to scan for images.
-    -r, --recursive     Recursively scan directories for images.
-    -t, --types=ARG     Comma separated list of file types to include in image scanning
-    -e, --pattern=ARG+  Patterns for scanning image files
-    -p, --prefix=ARG    Prefix to add to each scanned file
-    -j, --json=ARG      Custom JSON source for images
-        --php           Use PHP to load the list of images.
-    -J, --js=ARG+       URLs to custom JavaScript files
-    -C, --css=ARG+      URLs to custom CSS files
-        --no-min        Disable minimization
+Options:
+ -h, --help         Display this help.
+ -o, --output=ARG   File to write the page to. Uses STDOUT if not specified.
+ -d, --dir=ARG+     Directories to scan for images.
+ -r, --recursive    Recursively scan directories for images.
+ -t, --types=ARG    Comma separated list of file types to include in image scanning
+ -e, --pattern=ARG+ Patterns for scanning image files
+ -p, --prefix=ARG   Prefix to add to each scanned file
+ -j, --json=ARG     Custom JSON source for images
+     --php          Use PHP to load the list of images.
+ -J, --js=ARG+      URLs to custom JavaScript files
+ -C, --css=ARG+     URLs to custom CSS files
+     --no-min       Disable minimization
 ```
 
 ## Installation
 
-Kuvia can be installed from [npm](https://www.npmjs.com/) or [Yarn](https://yarnpkg.com/) using the following command:
+Kuvia can be installed from [npm](https://www.npmjs.com/) using the following command:
 
 ```bash
 npm install -g kuvia
-yarn install -g kuvia
 ```
 
 ## Usage
@@ -182,17 +181,17 @@ Likewise, since we output the HTML to the `index.html` file, it will appear in t
 
 ## Hacking the source code
 
-You can pull the latest development version from Gitlab:
+You can pull the latest development version from GitHub:
 
 ```bash
-git clone https://gitlab.com/lepovirta/kuvia.git
+git clone https://github.com/jpallari/kuvia.git
 ```
 
-Once you've fetched the source code, you can install the dependencies locally using [Yarn](https://yarnpkg.com/):
+Once you've fetched the source code, you can install the dependencies locally using NPM:
 
 ```bash
 cd kuvia
-yarn install
+npm install
 ```
 
 The JS source code for the UI can be found from `src` directory.
@@ -205,20 +204,12 @@ You can run the local Kuvia app from the `bin` directory to try your changes:
 ./bin/kuvia.js -o gallery.html -d myimages
 ```
 
-If you're going to make commits, make sure to install the Git hooks first:
-
-```bash
-yarn run githooks
-```
-
-The Git hooks ensure that the commits follow the [Conventional Commit](https://www.conventionalcommits.org/en/v1.0.0/) style.
-
 ## Releasing
 
 To create a new release, run the following commands in the master branch:
 
 ```bash
-yarn version $VERSION
+npm version $VERSION
 git push
 git push --tags
 ```
@@ -228,4 +219,3 @@ git push --tags
 2-clause BSD license
 
 See [LICENSE](LICENSE) for further detail.
-
