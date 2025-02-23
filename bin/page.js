@@ -15,14 +15,6 @@ async function readCssFile(options) {
   return uglifycss.processString(contents);
 }
 
-function optionsToLocals(options) {
-  return {
-    pretty: options['no-min'],
-    cssUrls: options.css || [],
-    jsUrls: options.js || [],
-  };
-}
-
 const placeholderRe = /\{\{\{([^}]+)\}\}\}/;
 
 /**
