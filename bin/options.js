@@ -31,9 +31,27 @@ const optionSpec = [
 
 const helpHeader = ['usage: kuvia [OPTIONS] [FILE ...]'].join('\n');
 
+/**
+ * @typedef {Object} OptionInfo
+ * @property {string} short - Short option name
+ * @property {string} long - Long option name  
+ * @property {string} mod - Option modifier (flag, single, multi)
+ */
+
+/**
+ * @typedef {Object} ParsedOptions
+ * @property {{[key: string]: OptionInfo}} shortOptions - Dictionary of short options
+ * @property {{[key: string]: OptionInfo}} longOptions - Dictionary of long options
+ * @property {Array<Array<string>>} helpTexts - Help text entries
+ */
+
+/** @type {ParsedOptions} */
 const parsedOptions = (() => {
+  /** @type {{[key: string]: OptionInfo}} */
   const shortOptions = {};
+  /** @type {{[key: string]: OptionInfo}} */
   const longOptions = {};
+  /** @type {Array<Array<string>>} */
   const helpTexts = [];
 
   for (const [shortOptName, longOptSpec, optComment] of optionSpec) {
@@ -48,6 +66,7 @@ const parsedOptions = (() => {
       mod = 'single';
     }
 
+    /** @type {OptionInfo} */
     const option = {
       short: shortOptName,
       long: longOptName,
@@ -73,6 +92,7 @@ const parsedOptions = (() => {
  * @returns {string} Formatted help text with options and descriptions
  */
 function renderHelp() {
+  /** @type {Array<number>} */
   const columnLengths = [];
   for (const row of parsedOptions.helpTexts) {
     for (let columnIndex = 0; columnIndex < row.length - 1; columnIndex += 1) {
@@ -119,6 +139,7 @@ function kebabToCamel(str) {
  * @returns {{options: Object, argv: string[], errorMessage?: string}} Parsed options and arguments
  */
 function parseOptions(argvInput) {
+  /** @type {{[key: string]: any}} */
   const options = {};
   const argv = [];
   let errorMessage;
@@ -126,6 +147,7 @@ function parseOptions(argvInput) {
 
   let arg;
   argloop: while ((arg = args.shift())) {
+    /** @type {OptionInfo} */
     let option;
     let match;
     let value;
@@ -206,7 +228,7 @@ function getOptions(args) {
     console.error(errorMessage);
     process.exit(1);
   }
-  if (options.help) {
+  if ((/** @type {{help?: boolean}} */ (options)).help) {
     console.error(renderHelp());
     process.exit(1);
   }

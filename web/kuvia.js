@@ -3,8 +3,7 @@
 //
 
 function log(...args) {
-  if (window.console && window.console.log) {
-    // console is not always available in some browsers
+  if (window.console) {
     console.log(...args);
   }
 }
@@ -334,9 +333,11 @@ class Display {
 class StateList {
   currentIndex = 0;
   isHashAvailable = false;
-  hashFunction = undefined;
   list = [];
-  indexByKey = undefined;
+  indexByKey = {};
+
+  /** @type {(function(string): string) | undefined} */
+  hashFunction = undefined;
 
   constructor(listItems, hashFunction) {
     this.currentIndex = 0;
@@ -359,6 +360,9 @@ class StateList {
     }
     const item = this.currentItem();
     if (item) {
+      if (typeof this.hashFunction === 'undefined') {
+        throw new Error('hashFunction is not defined');
+      }
       this.currentKey = this.hashFunction(item);
     }
   }
@@ -379,6 +383,9 @@ class StateList {
       return;
     }
     this.list.forEach((item, index) => {
+      if (typeof this.hashFunction === 'undefined') {
+        throw new Error('hashFunction is not defined');
+      }
       const key = this.hashFunction(item);
       this.indexByKey[key] = index;
     });
@@ -392,6 +399,9 @@ class StateList {
   }
 
   _getByItem(item) {
+    if (typeof this.hashFunction === 'undefined') {
+      throw new Error('hashFunction is not defined');
+    }
     return this._getByKey(this.hashFunction(item));
   }
 

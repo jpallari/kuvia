@@ -60,7 +60,7 @@ function optionsToHtmlHeaders({
 /**
  * Renders a template string by replacing placeholders with option values.
  * @param {string} templateStr - Template string with {{{placeholder}}} syntax
- * @param {Object} options - Object containing values for template placeholders
+ * @param {{[key: string]: string}} options - Object containing values for template placeholders
  * @returns {string} Rendered template with placeholders replaced
  * @throws {Error} When a template placeholder is not defined in options
  */
@@ -79,8 +79,8 @@ function renderTemplate(templateStr, options) {
  * Render the HTML page for Kuvia gallery.
  *
  * @param {Object} options - Configuration options
- * @param {Array<string>} [options.css] - External CSS URLs
- * @param {Array<string>} [options.js] - External JavaScript URLs
+ * @param {Array<string>?} [options.css] - External CSS URLs
+ * @param {Array<string>?} [options.js] - External JavaScript URLs
  * @param {boolean} [options.noMin] - Whether to skip minification
  * @param {function(): Promise<string>} jsSource - Function returning JavaScript source code
  * @param {function(): Promise<string>} listSource - Function returning image list JavaScript
@@ -98,8 +98,8 @@ async function renderPage(options, jsSource, listSource) {
     galleryCss,
     galleryJs,
     listJs,
-    cssUrls: options.css,
-    jsUrls: options.js,
+    cssUrls: options.css || [],
+    jsUrls: options.js || [],
   };
   const htmlHeaders = optionsToHtmlHeaders(templateOpts);
   return renderTemplate(templateStr, { header: htmlHeaders });

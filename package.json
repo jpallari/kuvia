@@ -11,7 +11,7 @@
     "lint:fix": "eslint --fix web/*.js bin/*.js",
     "format:check": "prettier -c .",
     "format:fix": "prettier -w .",
-    "types:check": "tsc --project ./jsconfig.json",
+    "types:check": "tsc --project jsconfig.json && tsc --project web/jsconfig.json",
     "fix:all": "npm run format:fix && npm run lint:fix",
     "all:check": "npm run format:check && npm run lint:check && npm run types:check && npm run test",
     "test": "jest --coverage"
@@ -23,6 +23,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.21.0",
+    "@types/csso": "^5.0.4",
     "@types/jest": "^29.5.14",
     "eslint": "^9.21.0",
     "globals": "^16.0.0",

@@ -47,7 +47,7 @@ function optionsToPatterns(options) {
   const optionPatterns = options.pattern || [];
   const filetypes = getFiletypes(options);
   const dirPatterns = (options.dir || []).map((dir) =>
-    filetypesToPattern(filetypes, dir, options.recursive),
+    filetypesToPattern(filetypes, dir, options.recursive || false),
   );
   return optionPatterns.concat(dirPatterns);
 }
@@ -63,7 +63,7 @@ function canGlob(options) {
   return (
     (options.pattern && options.pattern.length > 0) ||
     (options.dir && options.dir.length > 0)
-  );
+  ) || false;
 }
 
 /**

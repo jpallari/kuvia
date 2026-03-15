@@ -1,13 +1,25 @@
 {
   "compilerOptions": {
-    "module": "CommonJS",
-    "target": "es2015",
-    "checkJs": true,
-    "noEmit": true,
     "allowJs": true,
+    "alwaysStrict": true,
+    "checkJs": true,
+    "declaration": true,
+    "esModuleInterop": true,
+    "maxNodeModuleJsDepth": 0,
+    "module": "CommonJS",
+    "moduleResolution": "node",
+    "noEmit": true,
+    "noImplicitAny": true,
+    "noImplicitReturns": true,
+    "noImplicitThis": true,
+    "outDir": "dist",
     "resolveJsonModule": true,
-    "maxNodeModuleJsDepth": 0
+    "strictBindCallApply": true,
+    "strictFunctionTypes": true,
+    "strictPropertyInitialization": true,
+    "strict": true,
+    "target": "es2015"
   },
   "exclude": ["node_modules"],
-  "include": ["bin/*", "web/*"]
+  "include": ["bin/*"]
 }
