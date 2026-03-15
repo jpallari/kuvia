@@ -9,7 +9,7 @@ test('no files to be found from non-image directory', () => {
 
 test('given files to be included even when no files are found', () => {
   const options = {
-    files: 'foobar.jpg',
+    files: ['foobar.jpg'],
     dir: ['bin'],
   };
   const expected = ['foobar.jpg'];
@@ -35,7 +35,7 @@ test('directory search with custom file types', () => {
 
 test('prefix added to all files', () => {
   const options = {
-    files: 'foobar.jpg',
+    files: ['foobar.jpg'],
     dir: ['resources'],
     types: 'css,php',
     pattern: ['README.*'],

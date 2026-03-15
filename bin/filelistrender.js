@@ -4,16 +4,18 @@ const resources = require('./resources');
 const phpImageList = resources.resourcePath('imagelist.php');
 
 /**
- * @param {string} s
- * @returns {string}
+ * Renders a string as a JavaScript string literal.
+ * @param {string} s - The string to render
+ * @returns {string} The rendered JavaScript string literal
  */
 function renderString(s) {
   return `"${s}"`;
 }
 
 /**
- * @param {string[]} list
- * @returns {string}
+ * Renders an array of strings as a JavaScript array literal.
+ * @param {string[]} list - Array of strings to render
+ * @returns {string} The rendered JavaScript array literal
  */
 function renderList(list) {
   const listContents = list.map(renderString).join(', ');
@@ -21,13 +23,18 @@ function renderList(list) {
 }
 
 /**
- * @param {string} s
- * @returns {string}
+ * Renders a JavaScript assignment statement for the image list target.
+ * @param {string} s - The value to assign
+ * @returns {string} The rendered assignment statement
  */
 function renderTargetAssign(s) {
   return `window.kuviaimagelist = ${s};`;
 }
 
+/**
+ * Reads the PHP image list file from the resources directory.
+ * @returns {Promise<string>} The contents of the PHP image list file
+ */
 function readPhpImageList() {
   return fs.readFile(phpImageList, { encoding: 'utf-8' });
 }
@@ -39,7 +46,11 @@ function readPhpImageList() {
  * - JSON source? Use the JSON path as the image list.
  * - Otherwise: Create a list out of the given files.
  *
- * @param {() => Promise<string[]>} filelistSource
+ * @param {Object} options - Configuration options
+ * @param {boolean} [options.php] - Whether to use PHP mode
+ * @param {string} [options.json] - Path to JSON file for JSON mode
+ * @param {function(): Promise<string[]>} filelistSource - Function that returns a promise of file list
+ * @returns {Promise<string>} The rendered file list as JavaScript code
  */
 async function renderFileList(options, filelistSource) {
   if (options.php) {

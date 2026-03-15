@@ -5,9 +5,11 @@ const url = require('url');
 const defaultFiletypes = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
 
 /**
- * @param {string[]} filetypes
- * @param {string} dir
- * @param {boolean} isRecursive
+ * Converts file types to a glob pattern for file searching.
+ * @param {Array<string>} filetypes - Array of file extensions (e.g., ['jpg', 'png'])
+ * @param {string} dir - Directory path to search in
+ * @param {boolean} isRecursive - Whether to search recursively
+ * @returns {string} Glob pattern string
  */
 function filetypesToPattern(filetypes, dir, isRecursive) {
   const star = isRecursive ? '**' : '';
@@ -17,7 +19,10 @@ function filetypesToPattern(filetypes, dir, isRecursive) {
 }
 
 /**
- * @returns {string[]}
+ * Extracts file types from options, with fallback to default types.
+ * @param {Object} options - Configuration options
+ * @param {string|Array<string>} [options.types] - File types as string or array
+ * @returns {Array<string>} Array of file type extensions
  */
 function getFiletypes(options) {
   if (!options.types) {
@@ -30,7 +35,13 @@ function getFiletypes(options) {
 }
 
 /**
- * @returns {string[]}
+ * Converts options to an array of glob patterns.
+ * @param {Object} options - Configuration options
+ * @param {Array<string>} [options.pattern] - Custom glob patterns
+ * @param {Array<string>} [options.dir] - Directories to scan
+ * @param {string|Array<string>} [options.types] - File types as string or array
+ * @param {boolean} [options.recursive] - Whether to search recursively
+ * @returns {Array<string>} Array of glob patterns
  */
 function optionsToPatterns(options) {
   const optionPatterns = options.pattern || [];
@@ -42,7 +53,11 @@ function optionsToPatterns(options) {
 }
 
 /**
- * @returns {boolean}
+ * Determines if globbing can be performed based on options.
+ * @param {Object} options - Configuration options
+ * @param {Array<string>} [options.pattern] - Custom glob patterns
+ * @param {Array<string>} [options.dir] - Directories to scan
+ * @returns {boolean} True if globbing is possible
  */
 function canGlob(options) {
   return (
@@ -52,7 +67,9 @@ function canGlob(options) {
 }
 
 /**
- * @returns {Promise<string[]>}
+ * Performs file globbing based on the provided options.
+ * @param {Object} options - Configuration options containing patterns and directories
+ * @returns {Promise<Array<string>>} Promise resolving to array of matched file paths
  */
 async function globFiles(options) {
   if (!canGlob(options)) {
@@ -68,8 +85,9 @@ async function globFiles(options) {
 }
 
 /**
- * @param {string} file
- * @returns {string}
+ * Converts a file path to an HTTP-compatible path.
+ * @param {string} file - The file path to convert
+ * @returns {string} The HTTP-compatible path
  */
 function httpPath(file) {
   const f = path.sep === '\\' ? file.replace(/\\/g, '/') : file;
@@ -77,8 +95,11 @@ function httpPath(file) {
 }
 
 /**
- * @param {string[]} files
- * @returns {string[]}
+ * Converts file paths to HTTP-compatible paths with optional prefix.
+ * @param {Object} options - Configuration options
+ * @param {string} [options.prefix] - Prefix to add to each path
+ * @param {Array<string>} files - Array of file paths
+ * @returns {Array<string>} Array of HTTP-compatible paths
  */
 function httpPaths(options, files) {
   const prefix = options.prefix || '';
@@ -87,8 +108,9 @@ function httpPaths(options, files) {
 }
 
 /**
- * @param {string[]} l
- * @returns {string[]}
+ * Removes duplicate entries from an array while preserving order.
+ * @param {Array<string>} l - Array that may contain duplicates
+ * @returns {Array<string>} Array with duplicates removed
  */
 function deduplicate(l) {
   return l.filter((v, i, a) => a.indexOf(v) === i);
@@ -99,15 +121,14 @@ function deduplicate(l) {
  *
  * Duplicates are automatically removed from the results.
  *
- * The given options is a map that can contain these fields:
- * - files: list of files to always include in the results
- * - pattern: patterns for scanning files
- * - dir: directories to scan for files
- * - types: the types of files to scan for (e.g. jpg, png)
- * - prefix: prefix to include in all the scanned results
- * - recursive: whether to scan files recursively or not
- *
- * @returns {Promise<string[]>} found files
+ * @param {Object} options - Configuration options
+ * @param {Array<string>} [options.files] - List of files to always include in results
+ * @param {Array<string>} [options.pattern] - Patterns for scanning files
+ * @param {Array<string>} [options.dir] - Directories to scan for files
+ * @param {string|Array<string>} [options.types] - File types to scan for (e.g., 'jpg,png' or ['jpg', 'png'])
+ * @param {string} [options.prefix] - Prefix to include in all scanned results
+ * @param {boolean} [options.recursive] - Whether to scan files recursively
+ * @returns {Promise<Array<string>>} Promise resolving to array of found file paths
  */
 async function findFiles(options) {
   const extraFiles = options.files || [];

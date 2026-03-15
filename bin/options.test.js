@@ -16,6 +16,7 @@ test('parse image scanning options', () => {
     'extra.css',
     'file1.jpg',
     'file2.jpg',
+    '--no-min',
   ];
   const output = {
     options: {
@@ -25,6 +26,7 @@ test('parse image scanning options', () => {
       types: 'jpeg',
       js: ['extra.js'],
       css: ['extra.css'],
+      noMin: true,
     },
     argv: ['file1.jpg', 'file2.jpg'],
   };

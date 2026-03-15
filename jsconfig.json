@@ -2,7 +2,11 @@
   "compilerOptions": {
     "module": "CommonJS",
     "target": "es2015",
-    "checkJs": true
+    "checkJs": true,
+    "noEmit": true,
+    "allowJs": true,
+    "resolveJsonModule": true,
+    "maxNodeModuleJsDepth": 0
   },
   "exclude": ["node_modules"],
   "include": ["bin/*", "web/*"]

@@ -68,6 +68,10 @@ const parsedOptions = (() => {
   };
 })();
 
+/**
+ * Renders the help text for the command line interface.
+ * @returns {string} Formatted help text with options and descriptions
+ */
 function renderHelp() {
   const columnLengths = [];
   for (const row of parsedOptions.helpTexts) {
@@ -100,6 +104,20 @@ function renderHelp() {
 const shortOptPattern = /^-(\w[\w-]*)/;
 const longOptPattern = /^--(\w[\w-]*)((?:=[^]*)?)$/;
 
+/**
+ * Convert a kebab-case string to camelCase string.
+ * @param {string} str - The kebab-case string
+ * @returns {string} The camelCase string
+ */
+function kebabToCamel(str) {
+  return str.replace(/-([a-z])/g, (match, letter) => letter.toUpperCase());
+}
+
+/**
+ * Parses command line arguments into options and positional arguments.
+ * @param {string[]} argvInput - Array of command line arguments
+ * @returns {{options: Object, argv: string[], errorMessage?: string}} Parsed options and arguments
+ */
 function parseOptions(argvInput) {
   const options = {};
   const argv = [];
@@ -140,21 +158,22 @@ function parseOptions(argvInput) {
     }
 
     let flag = true;
+    const optionKey = kebabToCamel(option.long);
     switch (option.mod) {
       case 'single':
         if (!value) {
           value = args.shift();
         }
-        options[option.long] = value;
+        options[optionKey] = value;
         break;
       case 'multi':
         if (!value) {
           value = args.shift();
         }
-        if (!options[option.long]) {
-          options[option.long] = [];
+        if (!options[optionKey]) {
+          options[optionKey] = [];
         }
-        options[option.long].push(value);
+        options[optionKey].push(value);
         break;
       case 'flag':
         if (value === 'false') {
@@ -163,7 +182,7 @@ function parseOptions(argvInput) {
           errorMessage = `Unexpected parameter "${value}". Expected "true" or "false".`;
           break argloop;
         }
-        options[option.long] = flag;
+        options[optionKey] = flag;
         break;
       default:
         throw new Error(`Unexpected option modifier: ${option.mod}`);
@@ -173,6 +192,11 @@ function parseOptions(argvInput) {
   return { options, argv, errorMessage };
 }
 
+/**
+ * Gets parsed options from command line arguments with error handling.
+ * @param {string[]} [args] - Command line arguments (defaults to process.argv.slice(2))
+ * @returns {Object} Parsed options object with files array
+ */
 function getOptions(args) {
   if (!args) {
     args = process.argv.slice(2);

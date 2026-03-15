@@ -8,8 +8,8 @@ const mainProgramPath = resources.sourcePath('kuvia.js');
  * Quarantines source code such that top-level bindings are not implicitly
  * made on the window object.
  *
- * @param {string} sourceCode
- * @returns {string} quarantined source code
+ * @param {string} sourceCode - The JavaScript source code to quarantine
+ * @returns {string} The quarantined source code wrapped in an IIFE
  */
 function quarantineSourceCode(sourceCode) {
   return `(() => { ${sourceCode} })();`;
@@ -18,17 +18,19 @@ function quarantineSourceCode(sourceCode) {
 /**
  * Read the JavaScript and bundle it up to a single file.
  *
- * By default, the JavaScript is minified. If the 'no-min' option is found
+ * By default, the JavaScript is minified. If the `noMin` option is found
  * from the given options, the JavaScript is not minified.
  *
- * @returns {Promise<string>}
+ * @param {Object} options - Configuration options
+ * @param {boolean} [options.noMin] - Whether to skip minification
+ * @returns {Promise<string>} The bundled and optionally minified JavaScript code
  */
 async function readJs(options) {
   const rawSourceCode = await fs.readFile(mainProgramPath, {
     encoding: 'utf-8',
   });
   const sourceCode = quarantineSourceCode(rawSourceCode);
-  if (options['no-min']) {
+  if (options.noMin) {
     return sourceCode;
   }
   const minifiedCode = await minify(sourceCode, { sourceMap: false });
